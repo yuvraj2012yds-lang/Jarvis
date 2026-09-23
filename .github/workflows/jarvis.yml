@@ -22,7 +22,6 @@ jobs:
 
     - name: Create Missing Environment & Secret Files
       run: |
-        # Root level dummy files
         touch secrets.properties .env .env.example env.example
         echo "MAPS_API_KEY=dummy_key" >> secrets.properties
         echo "API_KEY=dummy_key" >> secrets.properties
@@ -30,7 +29,6 @@ jobs:
         echo "API_KEY=dummy_key" >> .env.example
         echo "API_KEY=dummy_key" >> env.example
 
-        # App module level dummy files
         mkdir -p app
         touch app/secrets.properties app/.env app/.env.example app/env.example
         echo "MAPS_API_KEY=dummy_key" >> app/secrets.properties
@@ -43,7 +41,7 @@ jobs:
       run: chmod +x gradlew
 
     - name: Build Debug APK
-      run: ./gradlew assembleDebug --no-daemon --stacktrace
+      run: ./gradlew :app:assembleDebug --no-daemon --stacktrace
 
     - name: Upload Debug APK
       uses: actions/upload-artifact@v4
