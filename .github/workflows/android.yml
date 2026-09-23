@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Code
+    - name: Checkout repository
       uses: actions/checkout@v4
 
     - name: Set up JDK 17
@@ -20,13 +20,17 @@ jobs:
         distribution: 'temurin'
 
     - name: Grant execute permission for gradlew
-      run: chmod +x gradlew || true
+      run: |
+        cd jarvis
+        chmod +x gradlew
 
     - name: Build with Gradle
-      run: ./gradlew assembleDebug
+      run: |
+        cd jarvis
+        ./gradlew assembleDebug --stacktrace
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
-        name: jarvis-debug-apk
-        path: app/build/outputs/apk/debug/*.apk
+        name: Jarvis-APK
+        path: jarvis/app/build/outputs/apk/debug/*.apk
