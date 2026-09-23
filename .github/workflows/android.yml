@@ -24,6 +24,12 @@ jobs:
       with:
         gradle-version: '9.3.1'
 
+    - name: Create secrets.properties
+      working-directory: ./jarvis
+      run: |
+        touch secrets.properties
+        echo "# Placeholder secrets" > secrets.properties
+
     - name: Build with Gradle
       working-directory: ./jarvis
       run: gradle assembleDebug --stacktrace
