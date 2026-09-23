@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
+    - name: Checkout Code
       uses: actions/checkout@v4
 
     - name: Set up JDK 17
@@ -18,18 +18,35 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
+        cache: gradle
 
-    - name: Setup Gradle 9.3.1
-      uses: gradle/actions/setup-gradle@v4
-      with:
-        gradle-version: '9.3.1'
+    - name: Create Missing Environment & Secret Files
+      run: |
+        # Root level dummy files
+        touch secrets.properties .env .env.example env.example
+        echo "MAPS_API_KEY=dummy_key" >> secrets.properties
+        echo "API_KEY=dummy_key" >> secrets.properties
+        echo "API_KEY=dummy_key" >> .env
+        echo "API_KEY=dummy_key" >> .env.example
+        echo "API_KEY=dummy_key" >> env.example
 
-    - name: Build with Gradle
-      working-directory: ./jarvis
-      run: gradle assembleDebug --stacktrace
+        # App module level dummy files
+        mkdir -p app
+        touch app/secrets.properties app/.env app/.env.example app/env.example
+        echo "MAPS_API_KEY=dummy_key" >> app/secrets.properties
+        echo "API_KEY=dummy_key" >> app/secrets.properties
+        echo "API_KEY=dummy_key" >> app/.env
+        echo "API_KEY=dummy_key" >> app/.env.example
+        echo "API_KEY=dummy_key" >> app/env.example
 
-    - name: Upload APK
+    - name: Grant Execute Permission for Gradlew
+      run: chmod +x gradlew
+
+    - name: Build Debug APK
+      run: ./gradlew assembleDebug --no-daemon --stacktrace
+
+    - name: Upload Debug APK
       uses: actions/upload-artifact@v4
       with:
-        name: Jarvis-APK
-        path: jarvis/app/build/outputs/apk/debug/*.apk
+        name: Jarvis-Debug-APK
+        path: app/build/outputs/apk/debug/*.apk
